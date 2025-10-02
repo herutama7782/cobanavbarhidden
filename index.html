@@ -83,6 +83,8 @@
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.2s;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .add-to-cart:hover {
@@ -247,6 +249,61 @@
 
         #clear-cart-button:hover {
             background-color: #5a6268;
+        }
+
+        /* ============================= RESPONSIVE DESIGN ============================= */
+
+        /* Untuk Tablet dan Layar Lebih Kecil (max-width: 968px) */
+        @media (max-width: 968px) {
+            #pos-container {
+                flex-direction: column; /* Ubah layout dari baris menjadi kolom */
+            }
+            #product-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Produk lebih kecil */
+            }
+        }
+
+        /* Untuk Ponsel (max-width: 600px) */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            #pos-container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+
+            #product-list {
+                grid-template-columns: repeat(2, 1fr); /* Hanya 2 kolom produk */
+                gap: 10px;
+            }
+            .product-card {
+                padding: 10px;
+            }
+            .product-name {
+                font-size: 0.9em;
+            }
+            .product-price {
+                font-size: 0.8em;
+            }
+
+            /* Ubah layout item di keranjang agar tidak terlalu padat */
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .cart-item-quantity {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            /* Tombol aksi di bawah jadi bertumpuk */
+            .cart-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>

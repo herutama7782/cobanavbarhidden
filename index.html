@@ -220,15 +220,29 @@
             min-height: 25px;
         }
 
-        #clear-cart-button {
+        /* Gaya untuk tombol aksi keranjang */
+        .cart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        #clear-cart-button, #fullscreen-button {
             background-color: #6c757d;
             color: white;
             border: none;
             padding: 10px;
             border-radius: 4px;
             cursor: pointer;
-            width: 100%;
             font-weight: bold;
+            flex: 1;
+        }
+
+        #fullscreen-button {
+            background-color: #17a2b8; /* Warna berbeda untuk membedakan */
+        }
+
+        #fullscreen-button:hover {
+            background-color: #138496;
         }
 
         #clear-cart-button:hover {
@@ -309,13 +323,17 @@
                 <span id="change-amount">Rp 0</span>
             </div>
 
-            <button id="clear-cart-button">Hapus Semua</button>
+            <div class="cart-actions">
+                <button id="fullscreen-button">Layar Penuh</button>
+                <button id="clear-cart-button">Hapus Semua</button>
+            </div>
         </section>
     </main>
 
     <!-- ============================= KODE JAVASCRIPT ========================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Elemen POS
             const productList = document.getElementById('product-list');
             const cartItemsContainer = document.getElementById('cart-items');
             const subtotalElement = document.getElementById('subtotal');
@@ -325,6 +343,10 @@
             const payButton = document.getElementById('pay-button');
             const clearCartButton = document.getElementById('clear-cart-button');
             const changeAmountElement = document.getElementById('change-amount');
+
+            // Elemen Fullscreen
+            const fullscreenButton = document.getElementById('fullscreen-button');
+            const posContainer = document.getElementById('pos-container');
 
             let cart = [];
 
@@ -449,6 +471,34 @@
                 paymentInput.value = '';
                 changeAmountElement.textContent = 'Rp 0';
             });
+
+            // =================== LOGIKA FULLSCREEN ===================
+            fullscreenButton.addEventListener('click', () => {
+                // Periksa apakah API didukung browser
+                if (!document.fullscreenElement) {
+                    // Jika belum fullscreen, minta izin untuk fullscreen
+                    posContainer.requestFullscreen().then(() => {
+                        fullscreenButton.textContent = 'Keluar Layar Penuh';
+                    }).catch(err => {
+                        alert(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
+                    });
+                } else {
+                    // Jika sudah fullscreen, keluar dari fullscreen
+                    document.exitFullscreen().then(() => {
+                        fullscreenButton.textContent = 'Layar Penuh';
+                    });
+                }
+            });
+
+            // Listener untuk mendeteksi perubahan status fullscreen (misalnya user tekan ESC)
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    fullscreenButton.textContent = 'Layar Penuh';
+                } else {
+                    fullscreenButton.textContent = 'Keluar Layar Penuh';
+                }
+            });
+
 
             // Inisialisasi tampilan awal
             renderCart();

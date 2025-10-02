@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem POS Sederhana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- ============================= KODE CSS ============================= -->
+    <style>
+        /* Gaya Umum */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        #pos-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            color: #0056b3;
+        }
+
+        /* Gaya Bagian Kiri (Daftar Produk) */
+        #product-list-section {
+            flex: 3;
+        }
+
+        #product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            background-color: #fafafa;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-name {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            display: block;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #218838;
+        }
+
+        /* Gaya Bagian Kanan (Keranjang) */
+        #cart-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #cart-items {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .remove-item {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: #aaa;
+            margin-top: 50px;
+        }
+
+        #cart-summary {
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .summary-item.total {
+            font-weight: bold;
+            font-size: 1.2em;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        #payment-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #payment-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        #pay-button {
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        #pay-button:hover {
+            background-color: #e0a800;
+        }
+
+        #change-display {
+            text-align: right;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 15px;
+            min-height: 25px;
+        }
+
+        #clear-cart-button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        #clear-cart-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================= KODE HTML ============================= -->
+    <main id="pos-container">
+        <!-- Bagian Kiri: Daftar Produk -->
+        <section id="product-list-section">
+            <h2>Daftar Produk</h2>
+            <div id="product-list">
+                <div class="product-card" data-name="Kopi Hitam" data-price="15000">
+                    <span class="product-name">Kopi Hitam</span>
+                    <span class="product-price">Rp 15.000</span>
+                    <button class="add-to-cart">Tambah</button>
+                </div>
+                <div class="product-card" data-name="Teh Manis" data-price="10000">
+                    <span class="product-name">Teh Manis</span>
+                    <span class="product-price">Rp 10.000</span>
+                    <button class="add-to-cart">Tambah</button>
+                </div>
+                <div class="product-card" data-name="Nasi Goreng" data-price="25000">
+                    <span class="product-name">Nasi Goreng</span>
+                    <span class="product-price">Rp 25.000</span>
+                    <button class="add-to-cart">Tambah</button>
+                </div>
+                <div class="product-card" data-name="Mie Ayam" data-price="20000">
+                    <span class="product-name">Mie Ayam</span>
+                    <span class="product-price">Rp 20.000</span>
+                    <button class="add-to-cart">Tambah</button>
+                </div>
+                <div class="product-card" data-name="Jus Jeruk" data-price="18000">
+                    <span class="product-name">Jus Jeruk</span>
+                    <span class="product-price">Rp 18.000</span>
+                    <button class="add-to-cart">Tambah</button>
+                </div>
+                <div class="product-card" data-name="Air Mineral" data-price="5000">
+                    <span class="product-name">Air Mineral</span>
+                    <span class="product-price">Rp 5.000</span>
+                    <button class="add-to-cart">Tambah</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bagian Kanan: Keranjang dan Pembayaran -->
+        <section id="cart-section">
+            <h2>Keranjang</h2>
+            <div id="cart-items">
+                <p class="cart-empty">Keranjang masih kosong.</p>
+            </div>
+
+            <div id="cart-summary">
+                <div class="summary-item">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">Rp 0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Pajak (10%):</span>
+                    <span id="tax">Rp 0</span>
+                </div>
+                <div class="summary-item total">
+                    <span>Total:</span>
+                    <span id="total">Rp 0</span>
+                </div>
+            </div>
+
+            <div id="payment-section">
+                <input type="number" id="payment-input" placeholder="Jumlah Uang Dibayar">
+                <button id="pay-button">Bayar</button>
+            </div>
+            
+            <div id="change-display">
+                <span>Kembalian:</span>
+                <span id="change-amount">Rp 0</span>
+            </div>
+
+            <button id="clear-cart-button">Hapus Semua</button>
+        </section>
+    </main>
+
+    <!-- ============================= KODE JAVASCRIPT ========================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const productList = document.getElementById('product-list');
+            const cartItemsContainer = document.getElementById('cart-items');
+            const subtotalElement = document.getElementById('subtotal');
+            const taxElement = document.getElementById('tax');
+            const totalElement = document.getElementById('total');
+            const paymentInput = document.getElementById('payment-input');
+            const payButton = document.getElementById('pay-button');
+            const clearCartButton = document.getElementById('clear-cart-button');
+            const changeAmountElement = document.getElementById('change-amount');
+
+            let cart = [];
+
+            // Fungsi untuk memformat angka ke format Rupiah
+            const formatRupiah = (amount) => {
+                return 'Rp ' + amount.toLocaleString('id-ID');
+            };
+
+            // Fungsi untuk merender keranjang
+            const renderCart = () => {
+                cartItemsContainer.innerHTML = ''; // Kosongkan tampilan keranjang
+
+                if (cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p class="cart-empty">Keranjang masih kosong.</p>';
+                } else {
+                    cart.forEach(item => {
+                        const cartItemElement = document.createElement('div');
+                        cartItemElement.classList.add('cart-item');
+                        cartItemElement.innerHTML = `
+                            <div class="cart-item-info">
+                                <span class="cart-item-name">${item.name}</span>
+                                <span class="cart-item-price">${formatRupiah(item.price)}</span>
+                            </div>
+                            <div class="cart-item-quantity">
+                                <button class="quantity-btn" data-id="${item.id}" data-action="decrease">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="quantity-btn" data-id="${item.id}" data-action="increase">+</button>
+                                <button class="remove-item" data-id="${item.id}">Hapus</button>
+                            </div>
+                        `;
+                        cartItemsContainer.appendChild(cartItemElement);
+                    });
+                }
+                updateSummary();
+            };
+
+            // Fungsi untuk memperbarui ringkasan total
+            const updateSummary = () => {
+                let subtotal = 0;
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                });
+
+                const tax = subtotal * 0.1; // Pajak 10%
+                const total = subtotal + tax;
+
+                subtotalElement.textContent = formatRupiah(subtotal);
+                taxElement.textContent = formatRupiah(tax);
+                totalElement.textContent = formatRupiah(total);
+            };
+
+            // Event Listener untuk tombol "Tambah" pada produk
+            productList.addEventListener('click', (event) => {
+                if (event.target.classList.contains('add-to-cart')) {
+                    const productCard = event.target.closest('.product-card');
+                    const name = productCard.dataset.name;
+                    const price = parseInt(productCard.dataset.price);
+                    const id = name.replace(/\s+/g, '-').toLowerCase(); // Buat ID unik dari nama
+
+                    const existingItem = cart.find(item => item.id === id);
+
+                    if (existingItem) {
+                        existingItem.quantity++;
+                    } else {
+                        cart.push({ id, name, price, quantity: 1 });
+                    }
+
+                    renderCart();
+                }
+            });
+
+            // Event Listener untuk aksi di dalam keranjang (tambah/kurang/hapus item)
+            cartItemsContainer.addEventListener('click', (event) => {
+                const target = event.target;
+                const id = target.dataset.id;
+
+                if (target.classList.contains('quantity-btn')) {
+                    const action = target.dataset.action;
+                    const item = cart.find(item => item.id === id);
+
+                    if (action === 'increase') {
+                        item.quantity++;
+                    } else if (action === 'decrease' && item.quantity > 1) {
+                        item.quantity--;
+                    }
+                    renderCart();
+                } else if (target.classList.contains('remove-item')) {
+                    cart = cart.filter(item => item.id !== id);
+                    renderCart();
+                }
+            });
+
+            // Event Listener untuk tombol "Bayar"
+            payButton.addEventListener('click', () => {
+                const totalText = totalElement.textContent.replace('Rp ', '').replace(/\./g, '');
+                const total = parseInt(totalText);
+                const payment = parseInt(paymentInput.value);
+
+                if (isNaN(payment) || payment < total) {
+                    alert('Jumlah pembayaran tidak valid atau kurang dari total.');
+                    return;
+                }
+
+                const change = payment - total;
+                changeAmountElement.textContent = formatRupiah(change);
+
+                // Simulasi struk (bisa dikembangkan)
+                setTimeout(() => {
+                    alert(`Pembayaran Berhasil!\n\nTotal: ${formatRupiah(total)}\nDibayar: ${formatRupiah(payment)}\nKembalian: ${formatRupiah(change)}`);
+                    // Reset setelah pembayaran
+                    cart = [];
+                    renderCart();
+                    paymentInput.value = '';
+                    changeAmountElement.textContent = 'Rp 0';
+                }, 500);
+            });
+
+            // Event Listener untuk tombol "Hapus Semua"
+            clearCartButton.addEventListener('click', () => {
+                cart = [];
+                renderCart();
+                paymentInput.value = '';
+                changeAmountElement.textContent = 'Rp 0';
+            });
+
+            // Inisialisasi tampilan awal
+            renderCart();
+        });
+    </script>
+</body>
+</html>
